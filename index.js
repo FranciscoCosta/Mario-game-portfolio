@@ -1,3 +1,4 @@
+
 // Chama a canvas de index.html
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
@@ -48,7 +49,7 @@ class Platform {
       x: x,
       y: y
     };
-    this.width = 200;
+    this.width = 500;
     this.height = 20;
   }
   draw() {
@@ -59,10 +60,17 @@ class Platform {
 
 const player = new Player();
 const platforms = [new Platform({
-    x:200, y:200
+    x:0, y:1000
 
 }), new Platform({
-    x:500, y:200
+    x:500, y:1000
+}), new Platform({
+  x:700, y:600
+}), new Platform({
+  x:1200, y:800
+}),
+new Platform({
+  x:1900, y:700
 })];
 const keys = {
   right: {
@@ -73,6 +81,9 @@ const keys = {
   },
 };
 
+
+let scrollOffset = 0
+
 function animate() {
   requestAnimationFrame(animate);
   c.clearRect(0, 0, canvas.width, canvas.height);
@@ -82,18 +93,20 @@ function animate() {
   })
 
   if (keys.right.pressed && player.position.x < 500) {
-    player.velocity.x = 5;
-  } else if (keys.left.pressed && player.position.x > 100) {
-    player.velocity.x = -5;
+    player.velocity.x = 10;
+  } else if (keys.left.pressed && player.position.x > 100 ) {
+    player.velocity.x = -10;
   } else {
     player.velocity.x = 0;
     if (keys.right.pressed) {
+      scrollOffset += 10  
       platforms.forEach((platform) => {
-        platform.position.x -= 5;
+        platform.position.x -= 10;
       })
     } else if (keys.left.pressed) {
       platforms.forEach((platform) => {
-        platform.position.x += 5;
+        scrollOffset -= 10
+        platform.position.x += 10;
       })
     }
   }
@@ -105,11 +118,13 @@ function animate() {
       player.position.y + player.height + player.velocity.y >=
         platform.position.y &&
       player.position.x + player.width >= platform.position.x &&
-      player.position.x <= platform.position.x + platform.width
-    ) {
+      player.position.x <= platform.position.x + platform.width){
       player.velocity.y = 0;
     }
   });
+  if (scrollOffset>5000) {
+      console.log("Fim!")
+  }
 }
 
 animate();
@@ -126,7 +141,7 @@ window.addEventListener("keydown", ({ key }) => {
       break;
     case "ArrowUp":
       console.log("salto");
-      player.velocity.y -= 20;
+      player.velocity.y -= 40;
       break;
     case "ArrowDown":
       console.log("baixo");
